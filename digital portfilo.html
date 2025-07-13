@@ -183,8 +183,11 @@
             color: var(--dark);
             display: inline-block;
             background: linear-gradient(to right, var(--primary), var(--accent));
+            /* Fixed background-clip with vendor prefixes */
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
+            color: transparent;
         }
 
         .section-title h2::after {
@@ -221,6 +224,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            border-radius: 10px;
         }
 
         .about-text {
@@ -300,6 +304,7 @@
             overflow: hidden;
             box-shadow: var(--shadow);
             transition: var(--transition);
+            position: relative;
         }
 
         .project-card:hover {
@@ -315,6 +320,18 @@
             justify-content: center;
             color: white;
             font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-img::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.2));
         }
 
         .project-content {
@@ -450,6 +467,27 @@
             margin-top: 20px;
         }
 
+        /* Animation classes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-on-scroll {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .animated {
+            opacity: 1;
+        }
+
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2.5rem;
@@ -469,6 +507,16 @@
 
             .section-title h2 {
                 font-size: 2rem;
+            }
+            
+            .hero-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn-outline {
+                margin-left: 0;
             }
         }
     </style>
@@ -515,8 +563,7 @@
                 <h2>About Me</h2>
             </div>
             <div class="about-content">
-                <div class="about-img">
-                    <!-- LinkedIn Profile Picture -->
+                <div class="about-img animate-on-scroll">
                     <img src="https://media.licdn.com/dms/image/D5603AQFmX0wOjFgQEQ/profile-displayphoto-shrink_400_400/0/1697794721611?e=1723075200&v=beta&t=Yp1xqK1LZ1o9p4F2eF7eN2zJv0hGz3yF1g1rDxR2jzM" alt="Kam Xu Liang">
                 </div>
                 <div class="about-text">
@@ -524,6 +571,20 @@
                     <p>I'm a passionate self-taught developer with a strong focus on financial technology. Through dedicated self-study, I've mastered HTML, JavaScript, Python, and CSS, building a solid foundation for creating innovative solutions in the fintech space.</p>
                     <p>My journey into programming began with a fascination for how technology can transform financial services, making them more accessible, efficient, and secure. I've spent countless hours building projects, solving problems, and continuously expanding my skill set to prepare for a career in fintech.</p>
                     <p>I'm now seeking to formalize my knowledge through specialized fintech courses, where I can deepen my understanding of blockchain, algorithmic trading, financial modeling, and secure payment systems. My goal is to contribute to the development of next-generation financial technologies that solve real-world problems.</p>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <h4>1000+</h4>
+                            <p>Hours of Coding</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4>12+</h4>
+                            <p>Projects Completed</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4>4</h4>
+                            <p>Programming Languages</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -535,7 +596,7 @@
                 <h2>Technical Skills</h2>
             </div>
             <div class="skills-container">
-                <div class="skill-card">
+                <div class="skill-card animate-on-scroll">
                     <i class="fab fa-html5"></i>
                     <h3>HTML5</h3>
                     <p>Proficient in HTML5 with experience in building semantic, accessible web structures and integrating with modern frameworks.</p>
@@ -543,7 +604,7 @@
                         <div class="skill-level-bar" style="width: 90%"></div>
                     </div>
                 </div>
-                <div class="skill-card">
+                <div class="skill-card animate-on-scroll">
                     <i class="fab fa-js"></i>
                     <h3>JavaScript</h3>
                     <p>Skilled in JavaScript development for both frontend and backend applications, with experience in modern frameworks and libraries.</p>
@@ -551,7 +612,7 @@
                         <div class="skill-level-bar" style="width: 85%"></div>
                     </div>
                 </div>
-                <div class="skill-card">
+                <div class="skill-card animate-on-scroll">
                     <i class="fab fa-python"></i>
                     <h3>Python</h3>
                     <p>Experienced in Python programming, particularly for data analysis, automation, and fintech applications including algorithmic trading concepts.</p>
@@ -559,7 +620,7 @@
                         <div class="skill-level-bar" style="width: 90%"></div>
                     </div>
                 </div>
-                <div class="skill-card">
+                <div class="skill-card animate-on-scroll">
                     <i class="fab fa-css3-alt"></i>
                     <h3>CSS & Frontend</h3>
                     <p>Strong command of CSS, responsive design principles, and modern frontend development techniques for creating intuitive user interfaces.</p>
@@ -577,7 +638,7 @@
                 <h2>Projects</h2>
             </div>
             <div class="projects-grid">
-                <div class="project-card">
+                <div class="project-card animate-on-scroll">
                     <div class="project-img">
                         <i class="fas fa-chart-line"></i>
                     </div>
@@ -594,7 +655,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="project-card">
+                <div class="project-card animate-on-scroll">
                     <div class="project-img">
                         <i class="fas fa-exchange-alt"></i>
                     </div>
@@ -611,7 +672,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="project-card">
+                <div class="project-card animate-on-scroll">
                     <div class="project-img">
                         <i class="fas fa-calculator"></i>
                     </div>
@@ -638,17 +699,17 @@
                 <h2>Contact Me</h2>
             </div>
             <div class="contact-cards">
-                <div class="contact-card">
+                <div class="contact-card animate-on-scroll">
                     <i class="fas fa-envelope"></i>
                     <h3>Email</h3>
                     <a href="mailto:venveqqyxl@gmail.com">venveqqyxl@gmail.com</a>
                 </div>
-                <div class="contact-card">
+                <div class="contact-card animate-on-scroll">
                     <i class="fab fa-linkedin"></i>
                     <h3>LinkedIn</h3>
                     <a href="https://www.linkedin.com/in/kam-xu-liang/" target="_blank">Kam Xu Liang</a>
                 </div>
-                <div class="contact-card">
+                <div class="contact-card animate-on-scroll">
                     <i class="fab fa-github"></i>
                     <h3>GitHub</h3>
                     <a href="https://github.com/" target="_blank">github.com</a>
@@ -712,6 +773,23 @@
                 }, 500);
             });
         });
+        
+        // Scroll animation for elements
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.animate-on-scroll');
+            elements.forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementTop < windowHeight - 100) {
+                    el.classList.add('animated');
+                }
+            });
+        }
+        
+        // Initial check and scroll event listener
+        animateOnScroll();
+        window.addEventListener('scroll', animateOnScroll);
     </script>
 </body>
 </html>
