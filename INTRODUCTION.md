@@ -1,0 +1,5 @@
+I'm Kam Xu Liang, a self-taught fintech developer passionate about building innovative financial solutions through code. With expertise in HTML, JavaScript, Python, and CSS, I specialize in creating real-time financial applications like cryptocurrency dashboards, currency converters, and financial calculators. My portfolio demonstrates strong technical capabilities in API integration, data visualization with Chart.js, and responsive UI design.
+
+As an aspiring fintech professional, I combine my self-driven technical training with a deep fascination for financial technology's potential to transform economic systems. My projects reflect both technical proficiency and a keen understanding of financial concepts, from cryptocurrency markets to currency exchange mechanisms.
+
+I'm actively seeking to formalize my knowledge through specialized fintech education to further develop skills in blockchain, algorithmic trading, and secure financial systems. With over 200+ coding hours and multiple completed fintech projects, I'm positioned to contribute to next-generation financial technology solutions.
