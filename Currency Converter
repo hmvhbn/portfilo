@@ -1,562 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Currency Converter</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary: #059669;
-            --dark: #0f172a;
-            --darker: #0b1120;
-            --light: #f8fafc;
-            --gray: #64748b;
-            --light-gray: #e2e8f0;
-            --accent: #8b5cf6;
-            --transition: all 0.3s ease;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+Currency Converter Web App: Technical Architecture
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+1. Overview
 
-        body {
-            background: linear-gradient(135deg, var(--darker), var(--dark));
-            color: var(--light);
-            line-height: 1.6;
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+This architecture describes a client-side web application for converting between global currencies using real-time exchange rates. It is a single-page, responsive app built with vanilla HTML, CSS, and JavaScript, and it relies on an external public API (exchangerate.host).
 
-        .container {
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-        }
+2. Components
 
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            animation: fadeIn 1s ease-out;
-        }
+graph TD
+  A[User Browser] -->|1. HTML/CSS/JS| B[UI Layer]
+  B -->|2. REST request| C[API Layer]
+  C -->|3. JSON response| B
+  B -->|4. Display result| A
 
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
-        }
+User Browser: The client environment (desktop or mobile) running the HTML page.
 
-        header p {
-            color: var(--light-gray);
-            max-width: 600px;
-            margin: 0 auto;
-        }
+UI Layer:
 
-        .converter-container {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            margin-bottom: 40px;
-            animation: slideUp 0.8s ease-out;
-        }
+HTML Structure defines form controls (amount input, currency selectors, buttons).
 
-        .converter-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+CSS handles responsive layout, spacing, typography, and theming.
 
-        .converter-header h2 {
-            font-size: 1.8rem;
-            color: var(--light);
-        }
+JavaScript binds event handlers and orchestrates network calls and DOM updates.
 
-        .refresh-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
+API Layer (exchangerate.host):
 
-        .refresh-btn:hover {
-            background: var(--primary-dark);
-            transform: rotate(360deg);
-        }
+Public REST endpoints:
 
-        .converter-form {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            gap: 20px;
-            align-items: center;
-        }
+/symbols to fetch a list of currency codes and descriptions.
 
-        @media (max-width: 768px) {
-            .converter-form {
-                grid-template-columns: 1fr;
-            }
-        }
+/convert?from=XXX&to=YYY&amount=Z to perform real-time conversion.
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-        }
+Data Flow:
 
-        .input-group label {
-            margin-bottom: 8px;
-            color: var(--light-gray);
-            font-weight: 500;
-        }
+On load, JS requests symbols and populates dropdowns.
 
-        .amount-input, .currency-select {
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            background: rgba(15, 23, 42, 0.5);
-            color: var(--light);
-            font-size: 1.1rem;
-            transition: var(--transition);
-        }
+On user action (Convert), JS fetches /convert with parameters.
 
-        .amount-input:focus, .currency-select:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
-        }
+API returns JSON: {result: 123.45}.
 
-        .swap-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 15px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
+JS updates the UI, showing conversion result.
 
-        .swap-btn:hover {
-            background: #7c3aed;
-            transform: scale(1.05);
-        }
+3. Layers & Responsibilities
 
-        .result-container {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 15px;
-            text-align: center;
-            animation: fadeIn 0.8s ease-out;
-        }
+Layer
 
-        .result-container h3 {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: var(--light-gray);
-        }
+Technology
 
-        .converted-amount {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 10px 0;
-            color: var(--light);
-            background: linear-gradient(to right, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
-        }
+Responsibility
 
-        .conversion-rate {
-            color: var(--light-gray);
-            font-size: 1.1rem;
-            margin-top: 10px;
-        }
+Presentation
 
-        .chart-container {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            margin-top: 30px;
-            animation: slideUp 0.8s ease-out 0.2s;
-            animation-fill-mode: backwards;
-        }
+HTML5, CSS3
 
-        .chart-container h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 1.8rem;
-            color: var(--light);
-        }
+Markup, styling, responsive layout, accessibility
 
-        .chart-wrapper {
-            height: 300px;
-            position: relative;
-        }
+Interaction
 
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            color: var(--gray);
-            font-size: 0.9rem;
-            animation: fadeIn 1s ease-out 0.4s;
-            animation-fill-mode: backwards;
-        }
+JavaScript (ES6)
 
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+Event handling, Fetch API calls, input validation
 
-        @keyframes slideUp {
-            from { 
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+Data Integration
 
-        /* Loading spinner */
-        .loader {
-            display: inline-block;
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s ease-in-out infinite;
-            margin: 30px auto;
-        }
+Public REST API
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+Currency symbols & conversion endpoints
 
-        .hidden {
-            display: none;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Global Currency Converter</h1>
-            <p>Convert between 180+ currencies using real-time exchange rates</p>
-        </header>
-        
-        <div class="converter-container">
-            <div class="converter-header">
-                <h2>Currency Converter</h2>
-                <button class="refresh-btn" id="refreshRates">
-                    <i class="fas fa-sync-alt"></i>
-                </button>
-            </div>
-            
-            <div class="converter-form">
-                <div class="input-group">
-                    <label for="amount">Amount</label>
-                    <input type="number" id="amount" class="amount-input" placeholder="Enter amount" value="100" min="0">
-                </div>
-                
-                <button class="swap-btn" id="swapCurrencies">
-                    <i class="fas fa-exchange-alt"></i>
-                </button>
-                
-                <div class="input-group">
-                    <label for="fromCurrency">From</label>
-                    <select id="fromCurrency" class="currency-select">
-                        <option value="USD" selected>USD - US Dollar</option>
-                        <option value="EUR">EUR - Euro</option>
-                        <option value="GBP">GBP - British Pound</option>
-                        <option value="JPY">JPY - Japanese Yen</option>
-                        <option value="CAD">CAD - Canadian Dollar</option>
-                        <option value="AUD">AUD - Australian Dollar</option>
-                        <option value="CNY">CNY - Chinese Yuan</option>
-                        <option value="INR">INR - Indian Rupee</option>
-                    </select>
-                </div>
-                
-                <div class="input-group">
-                    <label for="toCurrency">To</label>
-                    <select id="toCurrency" class="currency-select">
-                        <option value="EUR" selected>EUR - Euro</option>
-                        <option value="USD">USD - US Dollar</option>
-                        <option value="GBP">GBP - British Pound</option>
-                        <option value="JPY">JPY - Japanese Yen</option>
-                        <option value="CAD">CAD - Canadian Dollar</option>
-                        <option value="AUD">AUD - Australian Dollar</option>
-                        <option value="CNY">CNY - Chinese Yuan</option>
-                        <option value="INR">INR - Indian Rupee</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="result-container">
-                <div class="loader hidden" id="loader"></div>
-                <div id="resultContent">
-                    <h3>Converted Amount</h3>
-                    <div class="converted-amount" id="convertedAmount">0.00</div>
-                    <div class="conversion-rate" id="conversionRate">1 USD = 0.00 EUR</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="chart-container">
-            <h2>Exchange Rate History (Last 7 Days)</h2>
-            <div class="chart-wrapper">
-                <canvas id="exchangeChart"></canvas>
-            </div>
-        </div>
-        
-        <div class="footer">
-            <p>Real-time exchange rates provided by ExchangeRate-API | Data updates every 60 minutes</p>
-            <p>© 2023 Global Currency Converter. All rights reserved.</p>
-        </div>
-    </div>
+4. Key Design Considerations
 
-    <script>
-        // DOM Elements
-        const amountInput = document.getElementById('amount');
-        const fromCurrencySelect = document.getElementById('fromCurrency');
-        const toCurrencySelect = document.getElementById('toCurrency');
-        const swapBtn = document.getElementById('swapCurrencies');
-        const refreshBtn = document.getElementById('refreshRates');
-        const convertedAmount = document.getElementById('convertedAmount');
-        const conversionRate = document.getElementById('conversionRate');
-        const loader = document.getElementById('loader');
-        const resultContent = document.getElementById('resultContent');
-        const exchangeChart = document.getElementById('exchangeChart');
-        
-        // API Configuration
-        const API_KEY = 'YOUR_API_KEY'; // Replace with your actual API key
-        const BASE_URL = 'https://v6.exchangerate-api.com/v6';
-        
-        // Initial setup
-        let exchangeRates = {};
-        let chartInstance = null;
-        
-        // Initialize application
-        async function init() {
-            showLoader();
-            await fetchExchangeRates();
-            calculateConversion();
-            renderCurrencyChart();
-            hideLoader();
-        }
-        
-        // Fetch exchange rates
-        async function fetchExchangeRates() {
-            try {
-                const response = await fetch(`${BASE_URL}/${API_KEY}/latest/USD`);
-                const data = await response.json();
-                
-                if (data.result === 'success') {
-                    exchangeRates = data.conversion_rates;
-                    console.log('Exchange rates updated:', exchangeRates);
-                } else {
-                    throw new Error(data['error-type']);
-                }
-            } catch (error) {
-                console.error('Error fetching exchange rates:', error);
-                alert('Failed to fetch exchange rates. Using default rates.');
-                // Fallback rates
-                exchangeRates = {
-                    USD: 1,
-                    EUR: 0.85,
-                    GBP: 0.75,
-                    JPY: 110.25,
-                    CAD: 1.25,
-                    AUD: 1.35,
-                    CNY: 6.45,
-                    INR: 74.50
-                };
-            }
-        }
-        
-        // Calculate conversion
-        function calculateConversion() {
-            const amount = parseFloat(amountInput.value) || 0;
-            const fromCurrency = fromCurrencySelect.value;
-            const toCurrency = toCurrencySelect.value;
-            
-            if (!exchangeRates[fromCurrency] || !exchangeRates[toCurrency]) {
-                convertedAmount.textContent = '0.00';
-                conversionRate.textContent = 'Exchange rate not available';
-                return;
-            }
-            
-            // Convert to USD first, then to target currency
-            const amountInUSD = amount / exchangeRates[fromCurrency];
-            const convertedValue = amountInUSD * exchangeRates[toCurrency];
-            const rate = exchangeRates[toCurrency] / exchangeRates[fromCurrency];
-            
-            convertedAmount.textContent = convertedValue.toFixed(2);
-            conversionRate.textContent = `1 ${fromCurrency} = ${rate.toFixed(4)} ${toCurrency}`;
-        }
-        
-        // Render currency chart
-        function renderCurrencyChart() {
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
-            
-            // Mock data for chart (in a real app, this would come from an API)
-            const labels = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Today'];
-            const fromCurrency = fromCurrencySelect.value;
-            const toCurrency = toCurrencySelect.value;
-            
-            // Generate mock data points
-            const baseValue = exchangeRates[toCurrency] / exchangeRates[fromCurrency];
-            const dataPoints = labels.map((_, i) => {
-                const fluctuation = (Math.random() * 0.1) - 0.05;
-                return baseValue * (1 + fluctuation);
-            });
-            
-            const ctx = exchangeChart.getContext('2d');
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: `${fromCurrency} to ${toCurrency} Exchange Rate`,
-                        data: dataPoints,
-                        borderColor: '#8b5cf6',
-                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                        borderWidth: 3,
-                        pointBackgroundColor: '#2563eb',
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: '#e2e8f0'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: '#e2e8f0'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#e2e8f0',
-                                font: {
-                                    size: 14
-                                }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                            titleColor: '#f8fafc',
-                            bodyColor: '#e2e8f0',
-                            borderColor: '#8b5cf6',
-                            borderWidth: 1,
-                            padding: 12,
-                            displayColors: false
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Swap currencies
-        function swapCurrencies() {
-            const temp = fromCurrencySelect.value;
-            fromCurrencySelect.value = toCurrencySelect.value;
-            toCurrencySelect.value = temp;
-            calculateConversion();
-            renderCurrencyChart();
-        }
-        
-        // Show loader
-        function showLoader() {
-            loader.classList.remove('hidden');
-            resultContent.style.display = 'none';
-        }
-        
-        // Hide loader
-        function hideLoader() {
-            loader.classList.add('hidden');
-            resultContent.style.display = 'block';
-        }
-        
-        // Event Listeners
-        amountInput.addEventListener('input', calculateConversion);
-        fromCurrencySelect.addEventListener('change', () => {
-            calculateConversion();
-            renderCurrencyChart();
-        });
-        toCurrencySelect.addEventListener('change', () => {
-            calculateConversion();
-            renderCurrencyChart();
-        });
-        swapBtn.addEventListener('click', swapCurrencies);
-        refreshBtn.addEventListener('click', async () => {
-            showLoader();
-            await fetchExchangeRates();
-            calculateConversion();
-            renderCurrencyChart();
-            hideLoader();
-            
-            // Show refresh animation
-            refreshBtn.classList.add('rotating');
-            setTimeout(() => {
-                refreshBtn.classList.remove('rotating');
-            }, 1000);
-        });
-        
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
-</body>
-</html>
+Client‑Only Architecture: No backend server needed—simplifies deployment (just host static files).
+
+Responsiveness: CSS media queries ensure usability on mobile & desktop.
+
+Real‑Time Data: Reliance on a reliable, free public API minimizes maintenance overhead.
+
+Graceful Error Handling: JS checks for invalid input & failed network responses.
+
+Extensibility: Can be extended to include historical charts, offline caching, or server‑side proxy.
+
+5. Optional Enhancements
+
+Historical Rates Chart: Integrate Chart.js, fetch /timeseries endpoint.
+
+Currency Swap: Add a button to swap from and to currencies.
+
+Local Storage: Persist last-used currencies & amount.
+
+Theming: Light/dark mode toggle with CSS variables.
+
+End of Architecture Document
+
