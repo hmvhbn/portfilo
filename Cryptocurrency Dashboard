@@ -1,1 +1,25 @@
+Key Features
 
+
+1. Bitcoin price displayed with 24-hour change
+
+2. Interactive price chart showing 24-hour trend
+
+3. Simulated real-time price updates
+
+4. Portfolio Performance
+
+5. Portfolio value chart showing historical performance
+
+
+How It Works ???
+
+- The dashboard uses Chart.js for all visualizations
+
+- Real-time updates are simulated with JavaScript intervals
+
+- The UI is built with modern CSS (Flexbox and Grid)
+
+- Portfolio values are calculated based on current prices and holdings
+
+- The dashboard updates cryptocurrency prices every 10 seconds to simulate real-time data. You can easily connect this to actual cryptocurrency APIs like CoinGecko or Binance by replacing the simulated data with real API calls.
